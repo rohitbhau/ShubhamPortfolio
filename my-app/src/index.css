@@ -25,10 +25,14 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: flex-start; /* Align to the top */
   min-width: 320px;
   min-height: 100vh;
+  padding-top: 20px; /* Optional spacing from the top */
 }
+
 
 h1 {
   font-size: 3.2em;
