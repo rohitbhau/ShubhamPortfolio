@@ -7,6 +7,7 @@ import TaskAdd from "./screens/TaskAdd";
 import Dashboard from "./screens/Dashboard"; 
 import "./App.css";
 import MyTeam from "./components/MyTeam";
+import LoginPage from "./Components/LoginPage";
 
 
 const App = () => {
@@ -36,6 +37,8 @@ const App = () => {
           <Route path="/tasks" element={<TaskList tasks={tasks} onDelete={handleDeleteTask} onUpdateStatus={handleUpdateStatus} />} />
           <Route path="/add" element={<TaskAdd onAdd={handleAddTask} />} />
           <Route path="/team" element={<MyTeam />} />
+          <Route path="/assign-task/:id" element={<TaskAdd />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </Container>
     </Router>

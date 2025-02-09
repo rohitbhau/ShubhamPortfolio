@@ -1,27 +1,36 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
 
-const NavbarComponent = ({ isAuthenticated, onLogin, onLogout }) => {
+const NavbarComponent = ({ isAuthenticated, onLogout }) => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="w-100">
-      <Container fluid>
+    <Navbar bg="dark" variant="dark" expand="lg">
+      <Container>
         <Navbar.Brand as={Link} to="/">Task Manager</Navbar.Brand>
-        <Nav className="ms-auto">
-          <Nav.Link as={Link} to="/">Dashboard</Nav.Link>
-          <Nav.Link as={Link} to="/tasks">Task List</Nav.Link>
-          <Nav.Link as={Link} to="/add">Add Task</Nav.Link>
-          <Nav.Link as={Link} to="/team">My Team</Nav.Link> {/* Added My Team */}
-          {isAuthenticated ? (
-            <Button variant="danger" onClick={onLogout} className="ms-3">
-              Logout
-            </Button>
-          ) : (
-            <Button variant="success" onClick={onLogin} className="ms-3">
-              Login
-            </Button>
-          )}
-        </Nav>
+        <Navbar.Toggle aria-controls="navbar-nav" />
+        <Navbar.Collapse id="navbar-nav">
+          <Nav className="ms-auto d-flex gap-3 align-items-center"> {/* Fixed spacing */}
+            <Nav.Link as={Link} to="/">Dashboard</Nav.Link>
+            <Nav.Link as={Link} to="/tasks">Task List</Nav.Link>
+            <Nav.Link as={Link} to="/add">Add Task</Nav.Link>
+            <Nav.Link as={Link} to="/team">My Team</Nav.Link>
+            {isAuthenticated ? (
+              <Button variant="danger" onClick={onLogout}>
+                Logout
+              </Button>
+            ) : (
+              <Button variant="success" onClick={handleLogin}>
+                Login
+              </Button>
+            )}
+          </Nav>
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

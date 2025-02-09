@@ -1,25 +1,38 @@
 import React, { useState } from "react";
-import { Card, Button, Container, Row, Col, Form } from "react-bootstrap";
+import {
+  Card,
+  Button,
+  Container,
+  Row,
+  Col,
+  Form,
+  ListGroup,
+  Badge,
+  Accordion,
+} from "react-bootstrap";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import { useNavigate } from "react-router-dom";
+
+const COLORS = ["#28a745", "#ffc107", "#dc3545"]; // Green, Yellow, Red for performance
+
+const getColor = (performance) => {
+  return performance >= 80 ? COLORS[0] : performance >= 60 ? COLORS[1] : COLORS[2];
+};
 
 const MyTeam = () => {
+  const navigate = useNavigate();
   const [teamMembers, setTeamMembers] = useState([
-    { id: 1, name: "Alice Johnson", role: "Frontend Developer", email: "alice@example.com" },
-    { id: 2, name: "Bob Smith", role: "Backend Developer", email: "bob@example.com" },
-    { id: 3, name: "Charlie Brown", role: "UI/UX Designer", email: "charlie@example.com" },
+    { id: 1, name: "Alice Johnson", role: "Frontend Developer", email: "alice@example.com", performance: 85, tasks: [] },
+    { id: 2, name: "Bob Smith", role: "Backend Developer", email: "bob@example.com", performance: 70, tasks: [] },
+    { id: 3, name: "Charlie Brown", role: "UI/UX Designer", email: "charlie@example.com", performance: 55, tasks: [] },
   ]);
 
-  const [newMember, setNewMember] = useState({ name: "", role: "", email: "" });
+  const [newMember, setNewMember] = useState({ name: "", role: "", email: "", performance: 0 });
 
-  // Add a new team member
   const handleAddMember = () => {
     if (!newMember.name || !newMember.role || !newMember.email) return;
-    setTeamMembers([...teamMembers, { id: Date.now(), ...newMember }]);
-    setNewMember({ name: "", role: "", email: "" });
-  };
-
-  // Remove a member
-  const handleRemoveMember = (id) => {
-    setTeamMembers(teamMembers.filter((member) => member.id !== id));
+    setTeamMembers([...teamMembers, { id: Date.now(), ...newMember, tasks: [] }]);
+    setNewMember({ name: "", role: "", email: "", performance: 0 });
   };
 
   return (
@@ -27,37 +40,55 @@ const MyTeam = () => {
       <h2 className="text-primary mb-4">My Team</h2>
 
       {/* Add Member Form */}
-      <Row className="mb-4">
-        <Col md={4}>
-          <Form.Control
-            type="text"
-            placeholder="Name"
-            value={newMember.name}
-            onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
-          />
-        </Col>
-        <Col md={4}>
-          <Form.Control
-            type="text"
-            placeholder="Role"
-            value={newMember.role}
-            onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
-          />
-        </Col>
-        <Col md={4}>
-          <Form.Control
-            type="email"
-            placeholder="Email"
-            value={newMember.email}
-            onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
-          />
-        </Col>
-        <Col className="mt-2">
-          <Button variant="success" onClick={handleAddMember}>
-            Add Member
-          </Button>
-        </Col>
-      </Row>
+      <Row className="mb-4 d-flex align-items-end">
+  <Col md={3}>
+    <Form.Group>
+      <Form.Label>Name</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Enter name"
+        value={newMember.name}
+        onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
+        style={{ height: "36px" }} // Matching input height
+      />
+    </Form.Group>
+  </Col>
+
+  <Col md={3}>
+    <Form.Group>
+      <Form.Label>Role</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Enter role"
+        value={newMember.role}
+        onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
+        style={{ height: "36px" }} // Matching input height
+      />
+    </Form.Group>
+  </Col>
+
+  <Col md={3}>
+    <Form.Group>
+      <Form.Label>Email</Form.Label>
+      <Form.Control
+        type="email"
+        placeholder="Enter email"
+        value={newMember.email}
+        onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
+        style={{ height: "36px" }} // Matching input height
+      />
+    </Form.Group>
+  </Col>
+
+  {/* 🔥 Fix: Ensure button is small and aligned properly */}
+  <Col md={3} className="d-flex justify-content-end align-items-end">
+    <Button variant="success" size="sm" onClick={handleAddMember}>
+      Add Member
+    </Button>
+  </Col>
+</Row>
+
+
 
       {/* Team Members List */}
       <Row>
@@ -67,17 +98,58 @@ const MyTeam = () => {
               <Card.Body>
                 <h5>{member.name}</h5>
                 <p className="text-muted">{member.role}</p>
-                <p>{member.email}</p>
+                <p>
+                  <a href={`mailto:${member.email}`} className="text-decoration-none">{member.email}</a>
+                </p>
+
+                {/* Performance Pie Chart */}
+                <PieChart width={100} height={100}>
+                  <Pie
+                    data={[
+                      { name: "Completed", value: member.performance },
+                      { name: "Remaining", value: 100 - member.performance }
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={30}
+                    outerRadius={40}
+                    startAngle={90}
+                    endAngle={-270}
+                    dataKey="value"
+                  >
+                    <Cell fill={getColor(member.performance)} />
+                    <Cell fill="#e9ecef" />
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+                <p className="fw-bold">{member.performance}% Performance</p>
+
+                {/* Assign Task Button (Navigates to TaskAdd page) */}
                 <Button
                   variant="primary"
-                  href={`mailto:${member.email}`}
-                  className="me-2"
+                  className="mt-2"
+                  onClick={() => navigate(`/assign-task/${member.id}`)}
                 >
-                  Send Mail
+                  Assign Task
                 </Button>
-                <Button variant="danger" onClick={() => handleRemoveMember(member.id)}>
-                  Remove
-                </Button>
+
+                {/* Task List */}
+                <Accordion className="mt-3">
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>Tasks</Accordion.Header>
+                    <Accordion.Body>
+                      {member.tasks.length > 0 ? (
+                        <ListGroup>
+                          {member.tasks.map((task, index) => (
+                            <ListGroup.Item key={index}>{task.task}</ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                      ) : (
+                        <p>No tasks assigned.</p>
+                      )}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
               </Card.Body>
             </Card>
           </Col>

@@ -14,6 +14,8 @@ const TaskAdd = ({ onAdd }) => {
     allocatedPerson: "",
     taskType: "",
     role: "",
+    status: "Pending",
+    priority: "Medium",
   });
 
   const handleChange = (e) => {
@@ -22,7 +24,19 @@ const TaskAdd = ({ onAdd }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!task.title || !task.description || !task.assignDate || !task.completionDate || !task.startTime || !task.endTime || !task.allocatedPerson || !task.taskType || !task.role)
+    if (
+      !task.title ||
+      !task.description ||
+      !task.assignDate ||
+      !task.completionDate ||
+      !task.startTime ||
+      !task.endTime ||
+      !task.allocatedPerson ||
+      !task.taskType ||
+      !task.role ||
+      !task.status ||
+      !task.priority
+    )
       return;
     onAdd(task);
     setTask({
@@ -36,6 +50,7 @@ const TaskAdd = ({ onAdd }) => {
       taskType: "",
       role: "",
       status: "Pending",
+      priority: "Medium",
     });
   };
 
@@ -154,6 +169,26 @@ const TaskAdd = ({ onAdd }) => {
             <option value="Backend">Backend</option>
             <option value="Testing">Testing</option>
             <option value="Design">Design</option>
+          </Form.Select>
+        </Form.Group>
+
+        {/* Status Field */}
+        <Form.Group className="mb-3">
+          <Form.Label>Status</Form.Label>
+          <Form.Select name="status" value={task.status} onChange={handleChange} required>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </Form.Select>
+        </Form.Group>
+
+        {/* Priority Field */}
+        <Form.Group className="mb-3">
+          <Form.Label>Priority</Form.Label>
+          <Form.Select name="priority" value={task.priority} onChange={handleChange} required>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
           </Form.Select>
         </Form.Group>
 

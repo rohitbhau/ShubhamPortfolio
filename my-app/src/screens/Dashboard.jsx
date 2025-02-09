@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Row, Col, Container } from "react-bootstrap";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { useNavigate } from "react-router-dom"; // Import navigate hook
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const Dashboard = ({ tasks }) => {
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const navigate = useNavigate(); // Initialize navigate
+  const user = JSON.parse(localStorage.getItem("user")); // Get logged-in user info
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formattedDateTime = currentDateTime.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
   const totalTasks = tasks.length;
 
   const statusCount = tasks.reduce(
@@ -46,9 +68,36 @@ const Dashboard = ({ tasks }) => {
   const percentage = (count) =>
     totalTasks > 0 ? ((count / totalTasks) * 100).toFixed(1) : 0;
 
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // Clear the user data from localStorage
+    navigate("/"); // Redirect to login page
+  };
+
   return (
     <Container fluid className="mt-4">
-      <h2 className="text-primary mb-4">Dashboard</h2>
+      {/* Dashboard Header with Date and Time */}
+      <Row className="mb-4 align-items-center">
+        <Col xs={6}>
+          <h2 className="text-primary">Dashboard</h2>
+        </Col>
+        <Col xs={6} className="text-end">
+          <h5 className="text-muted">{formattedDateTime}</h5>
+        </Col>
+      </Row>
+
+      {/* User Info and Logout Button */}
+      <Row className="mb-4">
+        <Col xs={12} className="text-end">
+          {user && (
+            <div>
+              <span className="me-3">{user.email}</span>
+              <button onClick={handleLogout} className="btn btn-danger">
+                Logout
+              </button>
+            </div>
+          )}
+        </Col>
+      </Row>
 
       {/* Summary Cards */}
       <Row className="mb-4 d-flex justify-content-center">
