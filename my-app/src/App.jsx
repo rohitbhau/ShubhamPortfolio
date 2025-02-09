@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container } from "react-bootstrap";
-import NavbarComponent from "./components/NavbarComponent"; 
+import NavbarComponent from "./Components/NavbarComponent"; 
 import TaskList from "./screens/TaskList";
 import TaskAdd from "./screens/TaskAdd";
 import Dashboard from "./screens/Dashboard"; 
 import "./App.css";
-import MyTeam from "./components/MyTeam";
+import MyTeam from "./Components/MyTeam";
 import LoginPage from "./Components/LoginPage";
 
 
