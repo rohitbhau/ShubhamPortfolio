@@ -1,4 +1,8 @@
-[[redirects]]
+[build]
+  publish = "."  # Deploys files from current directory
+  command = "echo 'Building static HTML site'"  # No actual build needed
+  
+  [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
